@@ -1,0 +1,121 @@
+#inputBox {
+    -fx-min-width: 500;
+    -fx-min-height: 400;
+    -fx-padding: 5;
+}
+
+#outputBox {
+    -fx-min-width: 286;
+    -fx-padding: 5;
+}
+
+.logBox {
+    -fx-min-width: 798;
+    -fx-alignment: bottom-left;
+    -fx-padding: 5;
+}
+
+.title {
+    -fx-font-size: 20;
+    -fx-padding: 5;
+}
+
+.head {
+    -fx-font-size: 16;
+    -fx-padding: 5;
+}
+
+.select {
+    -fx-padding: 0 0 5 0;
+}
+
+#addFileButton {
+    -fx-min-width: 80;
+}
+
+#loadFileProgress {
+    -fx-min-width: 100;
+    -fx-min-height: 24;
+}
+
+#fileCountLabel {
+    -fx-min-width: 270;
+    -fx-min-height: 22;
+    -fx-padding: 0 5 0 5;
+}
+
+#clearFileButton {
+    -fx-min-width: 40;
+}
+
+#filePathCol {
+    -fx-alignment: center-left;
+}
+
+#fileSizeCol, #videoDurationCol {
+    -fx-alignment: center-right;
+}
+
+#moveCol, #removeCol {
+    -fx-alignment: center;
+}
+
+.outDirLabel, .outFileNameLabel {
+    -fx-min-width: 60;
+    -fx-min-height: 22;
+    -fx-alignment: center;
+}
+
+#outDirText {
+    -fx-min-width: 180;
+}
+
+#outDirButton {
+    -fx-min-width: 40;
+}
+
+#outFileText {
+    -fx-min-width: 220;
+}
+
+.modeBox, .videoOptionBox, .audioOptionBox {
+    -fx-padding: 5 0 10 0;
+}
+
+.modeBox .label, .radio-button {
+    -fx-min-height: 22;
+    -fx-padding: 0 0 0 20;
+}
+
+.videoOptionBox .label, .radio-button {
+    -fx-min-height: 22;
+    -fx-padding: 0 0 0 20;
+}
+
+.audioOptionBox .label, .radio-button {
+    -fx-min-height: 22;
+    -fx-padding: 0 0 0 20;
+}
+
+#clipTimeBox {
+    -fx-padding: 0 0 0 40;
+}
+
+#clipTimeBox .label {
+    -fx-min-height: 22;
+    -fx-alignment: center;
+    -fx-padding: 0;
+}
+
+#clipTimeStart, #clipTimeEnd {
+    -fx-max-width: 65;
+}
+
+#logText {
+    -fx-min-width: 786;
+    -fx-max-width: 786;
+}
+
+.execute {
+    -fx-font-size: 16px;
+}

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.videoeditor.controller.EditorController"
+      stylesheets="@../css/editor.css">
+
+    <SplitPane orientation="VERTICAL">
+        <SplitPane>
+            <VBox fx:id="inputBox">
+                <HBox styleClass="title">
+                    <Label text="导入"/>
+                </HBox>
+                <HBox styleClass="select">
+                    <Button fx:id="addFileButton" text="添加源文件" onAction="#onAddFileButtonClicked"/>
+                    <ProgressBar fx:id="loadFileProgress" progress="0" opacity="0"/>
+                    <Label fx:id="fileCountLabel"/>
+                    <Button fx:id="clearFileButton" text="清空" onAction="#onClearFileButtonClicked"/>
+                </HBox>
+                <TableView fx:id="fileTable" prefWidth="495" onDragOver="#onFileDragOver"
+                           onDragDropped="#onFileDragDropped">
+                    <placeholder>
+                        <Label text="暂无数据，请[添加源文件]或拖放文件到此处！"/>
+                    </placeholder>
+                    <columns>
+                        <TableColumn prefWidth="250" fx:id="filePathCol" text="文件名称"/>
+                        <TableColumn prefWidth="60" fx:id="videoDurationCol" text="时长"/>
+                        <TableColumn prefWidth="80" fx:id="fileSizeCol" text="大小" sortable="false"/>
+                        <TableColumn prefWidth="55" fx:id="moveCol" text="移动" sortable="false"/>
+                        <TableColumn prefWidth="30" fx:id="removeCol" text="移除" sortable="false"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <VBox fx:id="outputBox">
+                <HBox styleClass="title">
+                    <Label text="导出"/>
+                </HBox>
+                <VBox>
+                    <HBox styleClass="select">
+                        <Label styleClass="outDirLabel" text="导出位置"/>
+                        <TextField fx:id="outDirText" promptText="输入或选择文件夹"/>
+                        <Button fx:id="outDirButton" text="浏览" onAction="#onSelectOutDirButtonClicked"/>
+                    </HBox>
+                    <HBox styleClass="select">
+                        <Label styleClass="outFileNameLabel" text="文件名称"/>
+                        <TextField fx:id="outFileText" text="output.mp4" promptText="自定义文件名（如：output.mp4）"/>
+                    </HBox>
+                </VBox>
+                <Label styleClass="head" text="选项"/>
+                <VBox>
+                    <HBox styleClass="modeBox">
+                        <fx:define>
+                            <ToggleGroup fx:id="modeRadioGroup"/>
+                        </fx:define>
+                        <Label text="模式"/>
+                        <RadioButton fx:id="modeCopyRadio" toggleGroup="$modeRadioGroup" userData="0" text="复制"
+                                     onMouseClicked="#onModeChanged" selected="true"/>
+                        <RadioButton fx:id="modeMergeRadio" toggleGroup="$modeRadioGroup" userData="1"
+                                     onMouseClicked="#onModeChanged" text="合并"/>
+                        <RadioButton fx:id="modeConcatRadio" toggleGroup="$modeRadioGroup" userData="2"
+                                     onMouseClicked="#onModeChanged" text="拼接"/>
+                    </HBox>
+                    <HBox>
+                        <VBox styleClass="videoOptionBox">
+                            <fx:define>
+                                <ToggleGroup fx:id="videoRadioGroup"/>
+                            </fx:define>
+                            <Label text="视频"/>
+                            <RadioButton toggleGroup="$videoRadioGroup" userData="0" text="复制流" selected="true"/>
+                            <RadioButton toggleGroup="$videoRadioGroup" userData="1" text="消除视频" fx:id="vnRadio"/>
+                            <VBox fx:id="rotateBox">
+                                <RadioButton toggleGroup="$videoRadioGroup" userData="2" text="顺时针旋转90°"/>
+                                <RadioButton toggleGroup="$videoRadioGroup" userData="3" text="逆时针旋转90°"/>
+                                <RadioButton toggleGroup="$videoRadioGroup" userData="4" text="旋转180°"/>
+                            </VBox>
+                            <VBox>
+                                <RadioButton toggleGroup="$videoRadioGroup" userData="5" text="截取片段"
+                                             fx:id="clipTimeRadio"/>
+                                <HBox fx:id="clipTimeBox">
+                                    <TextField fx:id="clipTimeStart" text="00:00:00"/>
+                                    <Label text="-"/>
+                                    <TextField fx:id="clipTimeEnd" text="00:00:00"/>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+                        <VBox styleClass="audioOptionBox">
+                            <fx:define>
+                                <ToggleGroup fx:id="audioRadioGroup"/>
+                            </fx:define>
+                            <Label text="音频"/>
+                            <RadioButton toggleGroup="$audioRadioGroup" userData="0" text="复制流" selected="true"/>
+                            <RadioButton toggleGroup="$audioRadioGroup" userData="1" text="消除音频" fx:id="anRadio"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </SplitPane>
+
+        <VBox styleClass="logBox">
+            <Label styleClass="title" text="日志"/>
+            <TextArea fx:id="logText" editable="false"/>
+            <HBox styleClass="execute">
+                <Button fx:id="startButton" text="开始" onAction="#onStartButtonClicked"/>
+            </HBox>
+        </VBox>
+    </SplitPane>
+
+</HBox>
