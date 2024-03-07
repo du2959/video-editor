@@ -1,4 +1,4 @@
-## 打包方法
+## Windows平台打包方法
 
 ### 所需工具
 
@@ -25,11 +25,11 @@
 
 #### 打包Windows安装程序
 
-从打包得到的Jar所在目录中打开Windows命令行，执行`jpackage`命令。
+从打包得到的Jar所在目录中打开Windows命令行，执行`jpackage`命令（要求JDK 14或以上）。
 
 格式：
 
-`jpackage -t [类型] -n [程序名称] -i [输入目录] -d [输出目录] --main-jar [程序jar路径] --main-class [启动类] -p [jmod路径] --add-modules [模块名] --win-shortcut --win-menu`
+`jpackage -t [类型] -n [程序名称] -i [输入目录] -d [输出目录] --main-jar [主jar相对输入目录的路径] --main-class [启动类] -p [jmod路径] --add-modules [模块名] --win-shortcut --win-menu`
 
 示例：
 
