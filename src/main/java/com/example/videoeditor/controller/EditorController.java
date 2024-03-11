@@ -70,7 +70,7 @@ public class EditorController implements Initializable {
     modeConcatRadio.setTooltip(new Tooltip("拼接模式\n将多个视频文件首尾拼接为一个目标文件"));
     clipTimeEnd.setTooltip(new Tooltip("结束时间必须大于开始时间！\n结束时间允许为00:00:00，表示持续到结尾"));
     writeLogLn("提示：基于FFmpeg和JavaCV工具包实现。");
-    writeLogLn("提示：所有操作均为无损（不含解码编码），速度很快，但对文件格式要求严格，格式不一致可能会失败~");
+    writeLogLn("提示：所有操作均为无损（不含转码步骤），速度很快，但对文件格式要求严格，格式不一致可能会失败~");
   }
 
   @FXML
@@ -168,51 +168,55 @@ public class EditorController implements Initializable {
 
   @FXML
   protected void onStartButtonClicked() {
-    List<String> srcFilePathList = getSrcFilePathList();
-    String trgFilePath = getTrgFilePath();
-    if (srcFilePathList != null && srcFilePathList.size() != 0 && !"".equals(trgFilePath)) {
-      writeLogLn("源文件：" + srcFilePathList);
-      writeLogLn("目标文件：" + trgFilePath);
-      OptionMode optionModeValue = getOptionModeValue();
-      final VideoOptionType videoOptionValue = getVideoOptionValue();
-      final AudioOptionType audioOptionValue = getAudioOptionValue();
-      final AudioVideoOption audioVideoOption = new AudioVideoOption(optionModeValue, videoOptionValue, audioOptionValue);
-      writeLogLn("导出选项：" + audioVideoOption);
-      File trgDir = new File(getTrgDir());
-      if (trgDir.exists() && trgDir.isDirectory()) {
-        File trgFile = new File(trgFilePath);
-        if (!trgFile.exists()) {
-          long startTime = System.currentTimeMillis();
-          writeLogLn("正在导出...请稍候...");
-          onTaskRunning();
-          Task<Void> exportTask = new Task<>() {
-            @Override
-            protected Void call() {
-              try {
-                switch (optionModeValue) {
-                  case COPY -> copyByFfmpeg(srcFilePathList, trgFilePath, videoOptionValue, audioOptionValue);
-                  case MERGE -> mergeByFfmpeg(srcFilePathList, trgFilePath);
-                  case CONCAT -> concatByFfmpeg(srcFilePathList, trgFilePath, videoOptionValue, audioOptionValue);
+    try {
+      List<String> srcFilePathList = getSrcFilePathList();
+      if (srcFilePathList != null && srcFilePathList.size() != 0) {
+        String trgFilePath = getTrgFilePath();
+        writeLogLn("源文件：" + srcFilePathList);
+        writeLogLn("目标文件：" + trgFilePath);
+        OptionMode optionModeValue = getOptionModeValue();
+        final VideoOptionType videoOptionValue = getVideoOptionValue();
+        final AudioOptionType audioOptionValue = getAudioOptionValue();
+        final AudioVideoOption audioVideoOption = new AudioVideoOption(optionModeValue, videoOptionValue, audioOptionValue);
+        writeLogLn("导出选项：" + audioVideoOption);
+        File trgDir = new File(getTrgDir());
+        if (trgDir.exists() && trgDir.isDirectory()) {
+          File trgFile = new File(trgFilePath);
+          if (!trgFile.exists()) {
+            long startTime = System.currentTimeMillis();
+            writeLogLn("正在导出...请稍候...");
+            onTaskRunning();
+            Task<Void> exportTask = new Task<>() {
+              @Override
+              protected Void call() {
+                try {
+                  switch (optionModeValue) {
+                    case COPY -> copyByFfmpeg(srcFilePathList, trgFilePath, videoOptionValue, audioOptionValue);
+                    case MERGE -> mergeByFfmpeg(srcFilePathList, trgFilePath);
+                    case CONCAT -> concatByFfmpeg(srcFilePathList, trgFilePath, videoOptionValue, audioOptionValue);
+                  }
+                } catch (Exception e) {
+                  Platform.runLater(() -> writeErrorLn(e.getMessage()));
                 }
-              } catch (Exception e) {
-                Platform.runLater(() -> writeErrorLn(e.getMessage()));
+                return null;
               }
-              return null;
-            }
-          };
-          exportTask.setOnSucceeded(e -> Platform.runLater(() -> {
-            writeLogLn("导出已结束，用时 " + (System.currentTimeMillis() - startTime) + " 毫秒！");
-            onTaskFinished();
-          }));
-          executor.submit(exportTask);
+            };
+            exportTask.setOnSucceeded(e -> Platform.runLater(() -> {
+              writeLogLn("导出已结束，用时 " + (System.currentTimeMillis() - startTime) + " 毫秒！");
+              onTaskFinished();
+            }));
+            executor.submit(exportTask);
+          } else {
+            writeWarnLn("导出文件已存在！");
+          }
         } else {
-          writeWarnLn("导出文件已存在！");
+          writeWarnLn("导出目录不存在！");
         }
       } else {
-        writeWarnLn("导出目录不存在！");
+        writeWarnLn("错误：源文件不能为空！");
       }
-    } else {
-      writeWarnLn("失败：请检查源文件和导出文件配置项是否合法！");
+    } catch (Exception e) {
+      writeErrorLn(e.getMessage());
     }
   }
 
@@ -293,13 +297,13 @@ public class EditorController implements Initializable {
           final int index = this.getIndex();
           AudioVideoFile audioVideoFile = items.get(index);
           String videoCodec = audioVideoFile.getVideoCodec();
-          String tip = item + "\n视频编解码器：" + (videoCodec == null ? "无" : videoCodec);
+          String tip = item + "\n视频编码：" + (videoCodec == null ? "无" : videoCodec);
           if (videoCodec != null) {
             tip += "\n分辨率：" + audioVideoFile.getImageWidth() + "×" + audioVideoFile.getImageHeight() +
                     "\n帧率：" + audioVideoFile.getFrameRate();
           }
           String audioCodec = audioVideoFile.getAudioCodec();
-          tip += "\n音频编解码器：" + (audioCodec == null ? "无" : audioCodec);
+          tip += "\n音频编码：" + (audioCodec == null ? "无" : audioCodec);
           if (audioCodec != null) {
             tip += "\n声道数：" + audioVideoFile.getAudioChannels() +
                     "\n采样率：" + audioVideoFile.getSampleRate();
@@ -382,8 +386,11 @@ public class EditorController implements Initializable {
   private String getTrgFilePath() {
     String trgDir = getTrgDir();
     String trgFile = outFileText.getText();
-    if ("".equals(trgDir) || "".equals(trgFile) || trgFile.contains(File.separator)) {
-      return "";
+    if ("".equals(trgDir) || "".equals(trgFile)) {
+      throw new RuntimeException("错误：导出文件（夹）不能为空！");
+    }
+    if (!trgFile.matches("[^\\s\\\\/:\\*\\?\\\"<>\\|](\\x20|[^\\s\\\\/:\\*\\?\\\"<>\\|])*[^\\s\\\\/:\\*\\?\\\"<>\\|\\.]$")) {
+      throw new RuntimeException("错误：导出文件名不合法！");
     }
     if (!trgDir.endsWith(File.separator)) {
       trgDir += File.separator;
