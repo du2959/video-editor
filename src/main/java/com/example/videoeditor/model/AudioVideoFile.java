@@ -94,9 +94,15 @@ public class AudioVideoFile {
   }
 
   public String getSize() {
-    long temp = bytes * 100 / 1024 / 1024;
-    double mB = temp / 100.0;
-    return mB + " MB";
+    if (bytes > 1024 * 1024 * 1024) {
+      long temp = bytes * 100 / (1024 * 1024 * 1024);
+      double gB = temp / 100.0;
+      return gB + " GB";
+    } else {
+      long temp = bytes * 100 / (1024 * 1024);
+      double mB = temp / 100.0;
+      return mB + " MB";
+    }
   }
 
   public String getDuration() {
