@@ -7,15 +7,19 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 
@@ -297,6 +301,21 @@ public class EditorController implements Initializable {
           final int index = this.getIndex();
           AudioVideoFile audioVideoFile = items.get(index);
           this.setTooltip(new Tooltip(audioVideoFile.toString()));
+          this.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+              Stage infoStage = new Stage();
+              infoStage.initModality(Modality.APPLICATION_MODAL);
+              infoStage.initOwner(this.getScene().getWindow());
+              infoStage.setTitle("文件详情");
+              StackPane layout = new StackPane();
+              TextArea textArea = new TextArea(audioVideoFile.toString());
+              textArea.setEditable(false);
+              layout.getChildren().add(textArea);
+              Scene scene = new Scene(layout, 300, 200);
+              infoStage.setScene(scene);
+              infoStage.show();
+            }
+          });
         }
       }
     });
