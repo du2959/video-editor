@@ -93,6 +93,23 @@ public class AudioVideoFile {
     this.sampleRate = sampleRate;
   }
 
+  @Override
+  public String toString() {
+    String tip = path + "\n大小：" + getSize();
+    tip += "\n时长：" + getDuration();
+    tip += "\n视频编码：" + (videoCodec == null ? "无" : videoCodec);
+    if (videoCodec != null) {
+      tip += "\n分辨率：" + imageWidth + "×" + imageHeight;
+      tip += "\n帧率：" + frameRate;
+    }
+    tip += "\n音频编码：" + (audioCodec == null ? "无" : audioCodec);
+    if (audioCodec != null) {
+      tip += "\n声道数：" + audioChannels;
+      tip += "\n采样率：" + sampleRate;
+    }
+    return tip;
+  }
+
   public String getSize() {
     if (bytes > 1024 * 1024 * 1024) {
       long temp = bytes * 100 / (1024 * 1024 * 1024);

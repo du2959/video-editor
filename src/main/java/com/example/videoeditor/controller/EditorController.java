@@ -296,19 +296,7 @@ public class EditorController implements Initializable {
           this.setText(item);
           final int index = this.getIndex();
           AudioVideoFile audioVideoFile = items.get(index);
-          String videoCodec = audioVideoFile.getVideoCodec();
-          String tip = item + "\n视频编码：" + (videoCodec == null ? "无" : videoCodec);
-          if (videoCodec != null) {
-            tip += "\n分辨率：" + audioVideoFile.getImageWidth() + "×" + audioVideoFile.getImageHeight() +
-                    "\n帧率：" + audioVideoFile.getFrameRate();
-          }
-          String audioCodec = audioVideoFile.getAudioCodec();
-          tip += "\n音频编码：" + (audioCodec == null ? "无" : audioCodec);
-          if (audioCodec != null) {
-            tip += "\n声道数：" + audioVideoFile.getAudioChannels() +
-                    "\n采样率：" + audioVideoFile.getSampleRate();
-          }
-          this.setTooltip(new Tooltip(tip));
+          this.setTooltip(new Tooltip(audioVideoFile.toString()));
         }
       }
     });
